@@ -3,3 +3,7 @@ services:
     build: .
     tty: true
     stdin_open: true
+    volumes:
+      - "./credentials:/root/.aws"
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE:-default}

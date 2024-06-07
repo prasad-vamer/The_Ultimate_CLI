@@ -96,3 +96,66 @@ Attaching to app-1
 instead of directly running `docker compose up` I decided to run `docker compose run --rm app` to see if it works.
 
 Here the though is that the app service itself is now pointing to the sh via entry point command and it worked.
+
+
+# Journey continues
+Since the dockerization is done, next step is to make the AWS account switching effortless.
+
+## Effortless AWS Account Switching (Feature 2)
+`credentials` is created to the root of the project ans it is mounted to the container's `/root/.aws` directory. AWS CLI s expecing its credentials to be in that location. we will follow the same. 
+
+AWS profile management is done by the environment variable `AWS_PROFILE`. We can pass that value via `docker compose run` command. Along with it lets fix a defalt value to be used in the compose file. 
+the changed code will look like below:
+
+```yml
+services:
+  app:
+    build: .
+    tty: true
+    stdin_open: true
+    volumes:
+      - "./credentials:/root/.aws"
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE:-default}
+```
+
+the container can be run like this now.
+```shell
+AWS_PROFILE=my-profile docker compose run --rm app
+```
+
+or AWS profile can directtly changed inside the container like this.
+```shell
+export AWS_PROFILE=my-new-profile
+```
+
+these are the files in the credentials folder.
+```shell
+❯ ls credentials                                           
+config      credentials
+```
+
+config file looks like this.
+```shell
+[default]
+region = <Region>
+output = json
+```
+
+credentials file looks like this.
+```shell
+[default]
+# This is the default profile
+aws_access_key_id = <AWS ACCESS KEY>
+aws_secret_access_key = <AWS SECRET KEY>
+
+[my-profile]
+aws_access_key_id = <AWS ACCESS KEY>
+aws_secret_access_key = <AWS SECRET KEY>
+region = <Region>
+
+[my-new-profile]
+aws_access_key_id = <AWS ACCESS KEY>
+aws_secret_access_key = <AWS SECRET KEY>
+region = <Region>
+```
