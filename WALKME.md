@@ -159,3 +159,47 @@ aws_access_key_id = <AWS ACCESS KEY>
 aws_secret_access_key = <AWS SECRET KEY>
 region = <Region>
 ```
+
+## Adding ALIAS to the AWS CLI commands
+The next step is to add aliases to the AWS CLI Accessing commands to make them easier to remember and use. This will help users to quickly access the CLI Environment without having to remember the full command syntax.
+
+```shell
+AWS_PROFILE=myprofile docker compose run --rm app
+AWS_PROFILE=myAdmin docker compose run --rm app
+AWS_PROFILE=ABCProject docker compose run --rm app
+```
+
+too much to remember right? Let's make it easy.
+
+1. Open your shell configuration file:
+
+For Bash: ~/.bashrc or ~/.bash_profile
+For Zsh: ~/.zshrc
+
+2. Add the function:
+
+```sh
+function CLI() {
+  AWS_PROFILE=$1 docker compose run --rm app
+}
+```
+
+3. Save the file and reload the shell configuration:
+
+For Bash: source ~/.bashrc
+For Zsh: source ~/.zshrc
+
+### Usage
+- You can now use the function and pass the AWS_PROFILE value as an argument:
+
+```shell
+CLI myprofile
+CLI myAdmin
+CLI ABCProject
+```
+
+- if nothing is passed it will take the empty value and docker compose willl assign the default value.
+
+```shell
+CLI
+```

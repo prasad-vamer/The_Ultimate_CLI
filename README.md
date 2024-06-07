@@ -95,6 +95,8 @@ aws_secret_access_key = <AWS SECRET KEY>
 region = <Region>
 ```
 
+#### [Add Alias for much easier CLI Account Switching !](./WALKME.md#adding-alias-to-the-aws-cli-commands)
+
 5. Build the docker image
     ```sh
     docker compose build --no-cache
@@ -132,3 +134,23 @@ region = <Region>
     ```sh
     export AWS_PROFILE=my-new-profile
     ```
+- **Check the OS Release Information:**: To check the OS release information inside the container, run inside the container:
+    ```sh
+    cat /etc/os-release
+    ```
+
+## Project Walkthrough
+
+For a detailed walkthrough of the steps involved in creating this project, please refer to the [WALKME.md](WALKME.md) file. 
+
+This file provides an in-depth explanation of the path followed, the issues encountered along the way, and the solutions implemented to overcome those challenges.
+
+The `WALKME.md` file serves as a comprehensive guide that documents the entire process of building this project from start to finish. It includes valuable insights, lessons learned, and troubleshooting tips that can be helpful for anyone looking to understand the project's development journey or seeking guidance on similar projects.
+
+Whether you are a curious developer, a contributor, or someone interested in learning from the project's experiences, the `WALKME.md` file is an excellent resource to explore. It offers a behind-the-scenes look at the thought process, decision-making, and problem-solving approaches employed throughout the project's lifecycle.
+
+Feel free to dive into the `WALKME.md` file to gain a deeper understanding of the project's creation and to learn from the challenges and successes encountered along the way.
+
+---
+
+Start using **The Ultimate CLI** today and make AWS management a breeze!
