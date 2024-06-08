@@ -1,3 +1,4 @@
 # ignorethe credential files
 /credentials/*
 workingnotes/*
+.DS_Store

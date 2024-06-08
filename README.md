@@ -75,6 +75,10 @@ Welcome to **The Ultimate CLI** repository! This project is designed to streamli
 [default]
 region = <Region>
 output = json
+
+[profile my-profile]
+region = <Region>
+output = yml
 ```
 
 - `credentials` file looks like this.
