@@ -203,3 +203,31 @@ CLI ABCProject
 ```shell
 CLI
 ```
+
+## Changing the Docker file.
+AWS CLI image as a standalone image it works well till now. BUt i am not able  to install the latest node version in it as the dependency issue arises between amazon linux and the node latest versions groff package. So decided to change the docker file to use the node image as the base image.
+And the AWS CLI will be installed on top of it. (Taking insperation from my senior's code)
+
+```dockerfile
+# Use the latest node image as of 2024/06/07
+FROM node:22.2.0
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Install dependencies
+RUN apt-get update && \
+  apt-get install -y \
+  python3 \
+  python3-pip \
+  groff-base
+
+# Install the AWS CLI
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip" && unzip awscliv2.zip
+RUN ./aws/install
+
+CMD ["bash"]
+```
+
+No changes to the compose file or and steps.
+And we have the node and npm installed.
