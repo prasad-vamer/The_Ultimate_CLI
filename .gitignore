@@ -2,3 +2,9 @@
 /credentials/*
 workingnotes/*
 .DS_Store
+dist/
+build/
+.env
+
+CLI_services/node_modules/
+CLI_services/tmp/

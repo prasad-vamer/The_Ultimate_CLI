@@ -1,2 +1,5 @@
 # ignorethe credential files
 /credentials/*
+workingnotes/*
+
+CLI_services/node_modules/*
