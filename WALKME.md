@@ -140,6 +140,10 @@ config file looks like this.
 [default]
 region = <Region>
 output = json
+
+[profile my-profile]
+region = <Region>
+output = json
 ```
 
 credentials file looks like this.
@@ -231,3 +235,160 @@ CMD ["bash"]
 
 No changes to the compose file or and steps.
 And we have the node and npm installed.
+
+# Journey continues 
+## Simplified ECS Cluster and Container Access (Feature 3)
+Here the idea is to run a sript is run it shoud assist me to select the cluster and the container to enter in to.
+
+Doing this manually is a bit of a pain. Like in my previous projects there will be a big readme where my colleges wrote a hardcoded commands and steps to be followed to enter in to a container.
+As a rails developer I often need to enter into the Rails deployed containers.
+So decided to automate this process.
+
+All feature is devided in to two Steps.
+1. Installing typescript and other required packages for the Interactive CLI UI.
+2. Writing the shell script to select the cluster and access the containers.
+
+Main Folder is created as `cli_services` and two sub folders created as below.
+```shell
+cli_Services
+├── interactiveUI
+└── services
+```
+
+### 1: Installing typescript and other required packages for the Interactive CLI UI.
+Ui handles features will be handled inside the `interactiveUI` folder.
+Run the container and `cd` `interactiveUI` folder
+
+1. Initialize a new Node.js project:
+Run the following command to initialize a new Node.js project and create a package.json file:
+  
+```shell
+npm init -y
+```
+
+this will create a package.json file like this.
+```json
+{
+  "name": "interactiveui",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
+```
+
+2. Install TypeScript as a development dependency:
+Run the following command to install TypeScript as a development dependency in your project:
+```shell
+npm install --save-dev typescript
+```
+
+3. Create a TypeScript configuration file:
+Run the following command to generate a tsconfig.json file in your project directory:
+```shell
+npx tsc --init
+```
+
+4. Create a TypeScript file:
+Create a new file with a .ts extension, for example, index.ts. You can use any text editor or IDE of your choice to write your TypeScript code.
+```ts
+function greet(name: string): void {
+  console.log(`Hello, ${name}!`);
+}
+
+greet("World");
+```
+
+5. I want to directly execute the TypeScript code without explicitly compiling it and generating a separate JavaScript file. 
+I can use a tool called ts-node. ts-node is a package that allows you to run TypeScript files directly, without the need for a separate compilation step.
+Here's how you can use ts-node to execute your TypeScript code:
+- Install ts-node as a development dependency in your project:
+```shell
+npm install --save-dev ts-node
+```
+- Run the following command to execute your TypeScript code using ts-node:
+```shell
+npx ts-node index.ts
+```
+
+6. Successfully executed the TypeScript code using ts-node. The output should be:
+```shell
+root@c6e01e948d80:/usr/src/app/cli_services/interactiveUI# npm install --save-dev ts-node
+
+added 19 packages, and audited 21 packages in 9s
+
+found 0 vulnerabilities
+root@c6e01e948d80:/usr/src/app/cli_services/interactiveUI# npx ts-node index.ts
+Hello, World!
+root@c6e01e948d80:/usr/src/app/cli_services/interactiveUI# 
+```
+
+## Issue 4: [Not able to create a typescript code running environment](https://github.com/prasad-vamer/The_Ultimate_CLI/issues/4)
+
+### [🔗 Story here](https://github.com/prasad-vamer/The_Ultimate_CLI/issues/4)
+
+
+### Step 2. Writing the shell script to select the cluster and access the containers.
+1. First step is to make a folder and file structure as below.
+`services` folder will cater the scripts for the every services The_Ultimate_CLI offers.
+
+made the folder like this and added the first script to `access_container.sh` it.
+```shell
+.
+└── cli_services
+    ├── interactiveUI
+    │   ├── package-lock.json
+    │   ├── package.json
+    │   └── select.js
+    ├── services
+    │   └── ECS_services
+    │       └── access_container.sh
+    └── tmp
+```
+
+2. Updated the docker file to copy the services folder to the container.
+```dockerfile
+# Copy the services directory to the container
+COPY ./cli_services ./cli_services
+
+# Make all .sh files in the services directory and its subdirectories executable
+RUN find ./cli_services/services -type f -name "*.sh" -exec chmod +x {} \;
+```
+
+3. Running a simple script like this.
+````shell
+#!/bin/bash
+
+aws ecs list-clusters
+````
+
+## Issue 3: [Unable to redirect output to pager]()
+```shell
+root@bd63adb90437:/usr/src/app# bash services/access_ECS_Containers.sh/access_container.sh
+
+Unable to redirect output to pager. Received the following error when opening pager:
+[Errno 2] No such file or directory: 'less'
+
+Learn more about configuring the output pager by running "aws help config-vars".
+```
+
+### [🔗 Story here](https://github.com/prasad-vamer/The_Ultimate_CLI/issues/3)
+
+### In nutshell
+Decided to install the `less` package in the docker file.
+
+```dockerfile
+# Install CLI pager
+RUN apt-get install less
+```
+
+4. We continue to work on the script as the next step.
+ made a simple shell script that print the clusters and ask us to select the cluster to enter in to.
+ but here the UI seems very simple and not user friendly. So decided to use the `Inquirer` package to make the UI more user friendly.
+
+5. Final script is located [here](./cli_services/services/ECS_services/access_container.sh).

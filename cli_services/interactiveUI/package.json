@@ -1,0 +1,16 @@
+{
+  "name": "cli_services",
+  "version": "1.0.0",
+  "description": "npm manager for the cli services",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "prasad-vamer",
+  "license": "ISC",
+  "dependencies": {
+    "@types/yargs": "^17.0.32",
+    "inquirer": "^9.2.23",
+    "yargs": "^17.7.2"
+  }
+}
