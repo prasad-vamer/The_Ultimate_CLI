@@ -6,5 +6,5 @@ dist/
 build/
 .env
 
-CLI_services/node_modules/
-CLI_services/tmp/
+cli_services/interactiveUI/node_modules
+cli_services/tmp
