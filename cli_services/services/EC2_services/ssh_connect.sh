@@ -27,6 +27,7 @@ if [ $? -eq 0 ]; then
     echo "$RUNNING_INSTANCES_JSON" > "${tmp_path}${array_of_object}"
   else
     echo "No running EC2 instances found."
+    exit 1
   fi
 else
   echo "Failed to retrieve EC2 instance data."
