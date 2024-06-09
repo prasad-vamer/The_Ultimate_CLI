@@ -29,9 +29,10 @@ Welcome to **The Ultimate CLI** repository! This project is designed to streamli
 ### 2. Effortless AWS Account Switching
 - **AWS Account Management**: Switch between different AWS accounts seamlessly. Simply provide the access and secret tokens as environment variables, and manage multiple AWS accounts swiftly and efficiently.
 
-### 3. Simplified ECS Cluster and Container Management (TBD)
+### 3. Simplified ECS Cluster and Container Access
 - **ECS Cluster Navigation**: Easily choose and access the desired ECS cluster without manually retrieving cluster IDs or ARN IDs. Our script automates the process, allowing you to focus on your tasks.
 - **Container Access**: Directly access the containers within the selected ECS cluster with minimal effort.
+- [🔗 Story here](./WALKME.md#simplified-ecs-cluster-and-container-access-feature-3)
 
 ## Upcoming Features
 
