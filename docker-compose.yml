@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    tty: true
+    stdin_open: true
+    volumes:
+      - "./app:/usr/src/app/infra"
+    env_file:
+      - .env

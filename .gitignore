@@ -1,0 +1,9 @@
+# ignorethe credential files
+/credentials/*
+workingnotes/*
+.DS_Store
+dist/
+build/
+.env
+
+app/node_modules
