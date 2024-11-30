@@ -34,6 +34,24 @@ Welcome to **The Ultimate CLI** repository! This project is designed to streamli
 - **Container Access**: Directly access the containers within the selected ECS cluster with minimal effort.
 - [🔗 Story here](./WALKME.md#simplified-ecs-cluster-and-container-access-feature-3)
 
+### 4. Cost Optimization (New Feature)
+- **EC2 Elastic IP Management**: As part of cost optimization, this feature focuses on managing Elastic IPs associated with EC2 instances to ensure efficient resource utilization and cost savings. Key functionalities include:
+  - **Identifying Unallocated Elastic IPs**:
+    - Fetches the list of AWS regions.
+    - Checks for unallocated Elastic IPs in each region.
+    - Displays them in a readable table format for easy review.
+  - **Releasing Unallocated Elastic IPs**:
+    - Allows users to release Elastic IPs based on their preferences:
+      - Release all unallocated IPs across all regions.
+      - Release all unallocated IPs within specific regions.
+      - Release specific unallocated IPs in selected regions.
+  - **Interactive and Flexible**:
+    - Provides an interactive prompt to customize operations, ensuring that users have full control over which Elastic IPs to release.
+  - **Cost Benefits**:
+    - Helps reduce unnecessary AWS charges by identifying and releasing unused Elastic IPs tied to EC2 instances, contributing to better billing management and cost optimization.
+
+
+
 ## Upcoming Features
 
 - **Billing Management**: Get fine-tuned information about your AWS billing to optimize costs without compromising resources.
