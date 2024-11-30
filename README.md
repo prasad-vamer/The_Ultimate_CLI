@@ -49,6 +49,70 @@ Welcome to **The Ultimate CLI** repository! This project is designed to streamli
     - Provides an interactive prompt to customize operations, ensuring that users have full control over which Elastic IPs to release.
   - **Cost Benefits**:
     - Helps reduce unnecessary AWS charges by identifying and releasing unused Elastic IPs tied to EC2 instances, contributing to better billing management and cost optimization.
+### 5. Enhanced EC2 Instance Access (New Feature)
+
+- **Interactive EC2 Instance Management**: This feature provides a seamless and interactive way for developers to connect to running EC2 instances in a specified AWS region using SSM (AWS Systems Manager) session manager. Key functionalities include:
+
+  - **Region Selection**:
+    - Automatically detects the default AWS region configured on the system.
+    - Provides an option to either use the default region or select a region interactively from a list of all available AWS regions.
+  
+  - **Running EC2 Instances Retrieval**:
+    - Fetches the list of running EC2 instances in the selected region.
+    - Displays the instances along with their instance IDs, public IPs, and names in a readable format.
+
+  - **Interactive Instance Selection**:
+    - Allows users to interactively select an instance to connect to, using a user-friendly Node.js-based UI for selection.
+
+  - **Secure Instance Access**:
+    - Automatically establishes an SSM session with the selected EC2 instance without requiring direct SSH access, ensuring security and convenience.
+
+#### Example Workflow:
+1. **Default Region Detection**:
+   - The script detects the configured default region and prompts the user:
+     ```
+     The current configured default region is: ap-northeast-1
+     Do you want to use the default region? (y/yes||n/no): 
+     ```
+
+2. **Region Selection**:
+   - If the user opts not to use the default region, the script retrieves all available AWS regions and provides an interactive menu for selection:
+     ```
+     Retrieving list of AWS regions...
+     [Interactive menu displayed for region selection]
+     ```
+
+3. **Instance Selection**:
+   - After fetching the running EC2 instances in the selected region, the script displays the list and prompts the user to select one:
+     ```
+     [
+       {
+         "Name": "web-server",
+         "InstanceId": "i-0abcd1234efgh5678",
+         "PublicIP": "203.0.113.25"
+       },
+       {
+         "Name": "app-server",
+         "InstanceId": "i-0abcd1234ijkl9012",
+         "PublicIP": "203.0.113.26"
+       }
+     ]
+     [Interactive menu displayed for instance selection]
+     ```
+
+4. **Session Establishment**:
+   - Once an instance is selected, the script initiates an SSM session:
+     ```
+     Accessing EC2 instance: web-server (i-0abcd1234efgh5678)
+     Starting session with SessionId: ...
+     ```
+
+#### Benefits:
+- **Interactive Workflow**: Makes it easy for developers to connect to EC2 instances without memorizing instance IDs or regions.
+- **Security First**: Uses AWS SSM for access, eliminating the need for open SSH ports or direct key-based logins.
+- **Flexibility**: Provides options for region and instance selection, accommodating diverse workflows and setups.
+
+This feature is ideal for simplifying EC2 instance management and access for developers, DevOps engineers, and cloud administrators.
 
 
 
