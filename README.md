@@ -203,6 +203,15 @@ region = <Region>
     ```sh
     aws s3 ls
     ```
+8. To access verious services provided by The_Ultimate_CLI just bash `services` folder and run any script.
+    ```sh
+    cli_services# bash services/ec2_services/ssh_connect.sh 
+    ```
+
+    ```sh
+    cli_services# bash services/cost_optimizer/list_idle_elastics_ips.sh 
+    ```
+
 8. To exit from the container
     ```sh
     exit
