@@ -14,7 +14,7 @@ select_region() {
   read -p "Do you want to use the default region? (Y/n): " use_default_region
 
   case "${use_default_region,,}" in
-  y | yes)
+  y | yes | "")
     JSON_CONTENT=$(echo '{"Name": "'$DEFAULT_REGION'"}')
     echo "$JSON_CONTENT" >"${SELECTED_OPTION_OBJECT_PATH}"
     ;;
