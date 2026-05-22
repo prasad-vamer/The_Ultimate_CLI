@@ -5,32 +5,20 @@ set -e
 
 # Ensure bucket name is passed
 if [ -z "$1" ]; then
-  echo "Usage: $0 <s3-bucket-name> [--lock | ip1 ip2 ...]"
-  echo "  No extra args     → public (anyone can read)"
-  echo "  --lock            → IP-restricted to default IP only"
-  echo "  ip1 ip2 ...       → IP-restricted to default IP plus listed IPs"
+  echo "Usage: $0 <s3-bucket-name> ip1 ip2 ..."
+  echo "  No extra args  → public (anyone can read)"
+  echo "  ip1 ip2 ...    → IP-restricted to listed IPs only"
   exit 1
 fi
 
 BUCKET_NAME=$1
 REGION="ap-northeast-1"
-DEFAULT_SOURCE_IP="153.142.38.216"
 
 # Parse optional IP restriction args (shift off bucket name)
 shift
-RESTRICT=false
 ALLOWED_IPS=()
-
 while [ $# -gt 0 ]; do
-  case "$1" in
-    --lock|-l)
-      RESTRICT=true
-      ;;
-    *)
-      RESTRICT=true
-      ALLOWED_IPS+=("$1")
-      ;;
-  esac
+  ALLOWED_IPS+=("$1")
   shift
 done
 
@@ -59,9 +47,8 @@ aws s3api put-public-access-block \
 echo "Confirming public access block settings"
 aws s3api get-public-access-block --bucket $BUCKET_NAME
 
-if [ "$RESTRICT" = true ]; then
-  # Build unique IP list: default + any user-supplied IPs
-  UNIQUE_IPS=("$DEFAULT_SOURCE_IP")
+if [ ${#ALLOWED_IPS[@]} -gt 0 ]; then
+  UNIQUE_IPS=()
   for ip in "${ALLOWED_IPS[@]}"; do
     duplicate=false
     for existing in "${UNIQUE_IPS[@]}"; do
@@ -123,7 +110,7 @@ aws s3api put-bucket-policy --bucket $BUCKET_NAME --policy "$POLICY"
 echo ""
 echo "✅ Static website is available at:"
 echo "http://$BUCKET_NAME.s3-website-$REGION.amazonaws.com"
-if [ "$RESTRICT" = true ]; then
+if [ ${#ALLOWED_IPS[@]} -gt 0 ]; then
   echo "   Access restricted to: ${UNIQUE_IPS[*]}"
 else
   echo "   Access: public (no IP restriction)"
