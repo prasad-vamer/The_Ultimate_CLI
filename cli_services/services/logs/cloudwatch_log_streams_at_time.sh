@@ -51,8 +51,26 @@
 # Import colors
 source utility/colors.sh
 
+# Temporary file to remember the last used log group name
+TMP_PATH="/usr/src/app/cli_services/tmp/"
+LAST_LOG_GROUP_FILE="${TMP_PATH}last_log_group.txt"
+
 # Prompt user for log group, datetime, and timezone
-read -p "Enter Log Group Name: " LOG_GROUP_NAME
+if [ -f "$LAST_LOG_GROUP_FILE" ]; then
+  LAST_LOG_GROUP_NAME=$(cat "$LAST_LOG_GROUP_FILE")
+  echo -en "Enter Log Group Name (${BOLD_YELLOW}default${RESET}: ${CYAN}${LAST_LOG_GROUP_NAME}${RESET}): "
+  read LOG_GROUP_NAME
+  if [ -z "$LOG_GROUP_NAME" ]; then
+    LOG_GROUP_NAME="$LAST_LOG_GROUP_NAME"
+  fi
+else
+  read -p "Enter Log Group Name: " LOG_GROUP_NAME
+fi
+
+# Save for next run
+mkdir -p "$TMP_PATH"
+echo "$LOG_GROUP_NAME" >"$LAST_LOG_GROUP_FILE"
+
 read -p "Enter date/time (e.g., 2025-09-29 11:40:33): " INPUT_TIME
 read -p "Enter timezone (default: Asia/Tokyo): " TIMEZONE
 
