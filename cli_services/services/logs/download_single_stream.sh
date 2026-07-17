@@ -1,9 +1,38 @@
 #!/bin/bash
 
+# Import colors
+source utility/colors.sh
+
+# Temporary files to remember the last used log group / stream name
+TMP_PATH="/usr/src/app/cli_services/tmp/"
+LAST_LOG_GROUP_FILE="${TMP_PATH}last_log_group.txt"
+LAST_LOG_STREAM_FILE="${TMP_PATH}last_log_stream.txt"
+
 # Prompt user for log group, stream, and optional filter pattern
-read -p "Enter Log Group Name: " LOG_GROUP_NAME
-read -p "Enter Log Stream Name: " LOG_STREAM_NAME
+if [ -f "$LAST_LOG_GROUP_FILE" ]; then
+  LAST_LOG_GROUP_NAME=$(cat "$LAST_LOG_GROUP_FILE")
+  echo -en "Enter Log Group Name (${BOLD_YELLOW}default${RESET}: ${CYAN}${LAST_LOG_GROUP_NAME}${RESET}): "
+  read LOG_GROUP_NAME
+  [ -z "$LOG_GROUP_NAME" ] && LOG_GROUP_NAME="$LAST_LOG_GROUP_NAME"
+else
+  read -p "Enter Log Group Name: " LOG_GROUP_NAME
+fi
+
+if [ -f "$LAST_LOG_STREAM_FILE" ]; then
+  LAST_LOG_STREAM_NAME=$(cat "$LAST_LOG_STREAM_FILE")
+  echo -en "Enter Log Stream Name (${BOLD_YELLOW}default${RESET}: ${CYAN}${LAST_LOG_STREAM_NAME}${RESET}): "
+  read LOG_STREAM_NAME
+  [ -z "$LOG_STREAM_NAME" ] && LOG_STREAM_NAME="$LAST_LOG_STREAM_NAME"
+else
+  read -p "Enter Log Stream Name: " LOG_STREAM_NAME
+fi
+
 read -p "Enter Filter Pattern (optional, e.g. { \$.message = \"Redirected to*\" }): " FILTER_PATTERN
+
+# Save for next run
+mkdir -p "$TMP_PATH"
+echo "$LOG_GROUP_NAME" >"$LAST_LOG_GROUP_FILE"
+echo "$LOG_STREAM_NAME" >"$LAST_LOG_STREAM_FILE"
 
 # Output filename
 OUTPUT_FILE="logs_${LOG_STREAM_NAME//\//_}.txt"
