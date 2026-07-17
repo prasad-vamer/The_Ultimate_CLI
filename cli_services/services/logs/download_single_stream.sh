@@ -28,6 +28,7 @@ else
 fi
 
 read -p "Enter Filter Pattern (optional, e.g. { \$.message = \"Redirected to*\" }): " FILTER_PATTERN
+# { $.payload.path = "/company/instructor/target_users/5081/enquetes/edit/16353" }
 
 # Save for next run
 mkdir -p "$TMP_PATH"
