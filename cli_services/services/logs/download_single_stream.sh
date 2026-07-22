@@ -49,6 +49,16 @@ echo
 >"$OUTPUT_FILE"
 NEXT_TOKEN=""
 
+START_TIME=$(date +%s)
+PAGE=0
+
+progress() {
+  PAGE=$((PAGE + 1))
+  MATCHED=$(wc -l <"$OUTPUT_FILE" | tr -d ' ')
+  ELAPSED=$(($(date +%s) - START_TIME))
+  printf "\r${CYAN}  ...still fetching  page %d  |  %s matched so far  |  %ds elapsed${RESET}" "$PAGE" "$MATCHED" "$ELAPSED"
+}
+
 if [ -n "$FILTER_PATTERN" ]; then
   # filter-log-events supports --filter-pattern; paginate until nextToken disappears
   while :; do
@@ -70,6 +80,7 @@ if [ -n "$FILTER_PATTERN" ]; then
     fi
 
     echo "$RESPONSE" | jq -r '.events[].message' >>"$OUTPUT_FILE"
+    progress
 
     NEXT_TOKEN=$(echo "$RESPONSE" | jq -r '.nextToken // empty')
     [ -z "$NEXT_TOKEN" ] && break
@@ -98,10 +109,12 @@ else
 
     # Append messages to file
     echo "$RESPONSE" | jq -r '.events[].message' >>"$OUTPUT_FILE"
+    progress
 
     PREV_TOKEN="$NEXT_TOKEN"
     NEXT_TOKEN=$(echo "$RESPONSE" | jq -r '.nextForwardToken')
   done
 fi
 
+echo
 echo "✅ Completed. Logs saved to: $OUTPUT_FILE"
