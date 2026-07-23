@@ -227,10 +227,10 @@ The fix lives in `compose.yml` itself, not the alias — it mounts a folder next
 
 ```yaml
 volumes:
-  - "${PWD}/THE_ULTIMATE_CLI:/${AWS_PROFILE:-default}_mount"
+  - "${PWD}/.the_ultimate_cli:/${AWS_PROFILE:-default}_mount"
 ```
 
-`${PWD}` is resolved from your shell's environment at the moment `docker compose` runs, so it tracks your current working directory even though the compose file itself lives elsewhere; `${AWS_PROFILE:-default}` names the mount after the profile you passed in. Docker creates the host-side `THE_ULTIMATE_CLI` folder automatically if it doesn't exist yet. Keeping this in `compose.yml` (rather than as an ad-hoc `-v` flag built inside the shell function) means it's version-controlled and applies for anyone using this repo, not just your personal shell config.
+`${PWD}` is resolved from your shell's environment at the moment `docker compose` runs, so it tracks your current working directory even though the compose file itself lives elsewhere; `${AWS_PROFILE:-default}` names the mount after the profile you passed in. Docker creates the host-side `.the_ultimate_cli` folder automatically if it doesn't exist yet. Keeping this in `compose.yml` (rather than as an ad-hoc `-v` flag built inside the shell function) means it's version-controlled and applies for anyone using this repo, not just your personal shell config.
 
 The one thing still worth doing from the alias is passing through extra `docker compose run` flags via `${@:2}` — everything after the profile name goes straight through, so you can layer on additional ad-hoc mounts when needed, e.g.:
 

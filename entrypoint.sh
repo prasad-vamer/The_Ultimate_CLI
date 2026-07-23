@@ -3,8 +3,8 @@
 # Ensure tmp directory exists
 mkdir -p /usr/src/app/cli_services/tmp
 
-# Base of the caller's mounted directory (see the CLI shell function's -v
-# "$PWD:/${AWS_PROFILE}_mount"). Any subfolder scripts need can be built from
+# Base of the caller's mounted directory (see the "${PWD}/.the_ultimate_cli"
+# volume in compose.yml). Any subfolder scripts need can be built from
 # $MOUNT_DIR without redefining this path.
 export MOUNT_DIR="/${AWS_PROFILE}_mount"
 
@@ -54,5 +54,15 @@ if [ ! -d "/usr/src/app/cli_services/interactiveUI/node_modules" ]; then
   cd /usr/src/app/cli_services
 fi
 
-# Execute the command passed to the container
-exec "$@"
+# Run the command passed to the container (not exec'd, so cleanup below
+# still runs afterwards)
+"$@"
+EXIT_CODE=$?
+
+# Remove any subfolder under the mounted directory (e.g. outputs/) that
+# ended up empty this run, so the host folder doesn't accumulate clutter
+# across sessions. Never touches $MOUNT_DIR itself (the bind mount point)
+# or non-empty folders.
+find "$MOUNT_DIR" -mindepth 1 -depth -type d -empty -delete 2>/dev/null
+
+exit $EXIT_CODE

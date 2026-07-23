@@ -6,6 +6,6 @@ services:
     volumes:
       - "./credentials:/root/.aws"
       - "./cli_services:/usr/src/app/cli_services"
-      - "${PWD}/THE_ULTIMATE_CLI:/${AWS_PROFILE:-default}_mount"
+      - "${PWD}/.the_ultimate_cli:/${AWS_PROFILE:-default}_mount"
     environment:
       - AWS_PROFILE=${AWS_PROFILE:-default}

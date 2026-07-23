@@ -118,12 +118,14 @@ This feature is ideal for simplifying EC2 instance management and access for dev
 
 - **Why it exists**: Services like the log downloader (`services/logs/download_single_stream.sh`) and the WireGuard provisioner (`services/vpn/wireguard_provision.sh`) produce files the user actually needs (downloaded logs, VPN client configs). Previously these were written inside the container's `cli_services/` folder, which is bind-mounted straight into this repo — so every result accumulated inside the repo itself and was lost the moment the container stopped, unless committed by accident.
 - **How it works now**:
-  - `compose.yml` mounts a dedicated host folder — `${PWD}/THE_ULTIMATE_CLI` (Docker creates it automatically if missing, relative to wherever you invoke `CLI` from) — into the container at `/${AWS_PROFILE:-default}_mount`.
-  - `entrypoint.sh` exports two environment variables at container start, available to every script with zero per-script setup:
-    - `MOUNT_DIR` — the base mount (`/${AWS_PROFILE}_mount`), for any future subfolder needs (e.g. user scripts).
+  - `compose.yml` mounts a dedicated host folder — `${PWD}/.the_ultimate_cli` (Docker creates it automatically if missing, relative to wherever you invoke `CLI` from) — into the container at `/${AWS_PROFILE:-default}_mount`.
+  - `entrypoint.sh` exports environment variables at container start, available to every script with zero per-script setup:
+    - `MOUNT_DIR` — the base mount (`/${AWS_PROFILE}_mount`).
     - `OUTPUT_DIR` — `$MOUNT_DIR/outputs`, pre-created, where result-producing scripts should write.
   - Any script that generates a user-facing result just writes to `$OUTPUT_DIR` — no need to compute paths, know the AWS profile, or create directories itself.
-- **Result**: Generated files land at `<the directory you ran CLI from>/THE_ULTIMATE_CLI/outputs/...` on your host machine, survive after the container exits, and never touch the repo.
+- **Result**: Generated files land at `<the directory you ran CLI from>/.the_ultimate_cli/outputs/...` on your host machine, survive after the container exits, and never touch the repo.
+- **Auto-cleanup on exit**: when the container exits, `entrypoint.sh` deletes any subfolder under the mount (e.g. `outputs/`) that ended up empty that session, so an unused folder doesn't linger on the host across runs. Non-empty folders and the mount point itself are never touched.
+- **Same directory, repeat runs**: the host source path is tied to the directory you invoke `CLI` from, not the profile — so running `CLI` multiple times, even with different profiles, from the same directory shares the same `.the_ultimate_cli/outputs` folder.
 - **Rebuilding after changes**: Since `entrypoint.sh` and the `Dockerfile` are baked into the image at build time, run `CLI build` (see the [alias section](./WALKME.md#adding-alias-to-the-aws-cli-commands)) after editing either, so the container picks up the change.
 
 ## Upcoming Features
