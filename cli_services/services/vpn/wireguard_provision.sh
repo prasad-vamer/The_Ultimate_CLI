@@ -52,7 +52,7 @@ SG_NAME="wireguard-${DEPLOY}-sg"
 ROLE_NAME="wireguard-${DEPLOY}-role"
 PROFILE_NAME="wireguard-${DEPLOY}-profile"
 SSM_PARAM="/wireguard/${DEPLOY}-client"
-OUT_FILE="wireguard-${DEPLOY}-client.conf"
+OUT_FILE="${OUTPUT_DIR}/wireguard-${DEPLOY}-client.conf"
 
 # ---------------------------------------------------------------------------
 # Pick the region (2nd arg, or prompt)
@@ -282,7 +282,7 @@ for i in $(seq 1 40); do
     echo " Endpoint: ${EIP}:${WG_PORT}"
     echo "================================================================"
     echo " Import it into the WireGuard app, or on Linux/macOS:"
-    echo "   sudo wg-quick up ./$OUT_FILE"
+    echo "   sudo wg-quick up $OUT_FILE"
     echo " For a phone QR code:"
     echo "   qrencode -t ansiutf8 < $OUT_FILE"
     echo " Tear this VPN down later with:"

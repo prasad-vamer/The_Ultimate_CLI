@@ -3,6 +3,16 @@
 # Ensure tmp directory exists
 mkdir -p /usr/src/app/cli_services/tmp
 
+# Base of the caller's mounted directory (see the CLI shell function's -v
+# "$PWD:/${AWS_PROFILE}_mount"). Any subfolder scripts need can be built from
+# $MOUNT_DIR without redefining this path.
+export MOUNT_DIR="/${AWS_PROFILE}_mount"
+
+# User-facing results (log downloads, generated configs, etc.) go here
+# instead of accumulating inside the repo.
+export OUTPUT_DIR="${MOUNT_DIR}/outputs"
+mkdir -p "$OUTPUT_DIR"
+
 # Create credentials directory if not present
 mkdir -p /root/.aws
 

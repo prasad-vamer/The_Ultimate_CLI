@@ -184,7 +184,12 @@ For Zsh: ~/.zshrc
 
 ```sh
 function CLI() {
-  AWS_PROFILE=$1 docker compose run --rm app
+  if [[ "$1" == "build" ]]; then
+    docker compose -f /path/to/The_Ultimate_CLI/compose.yml build
+    return
+  fi
+
+  AWS_PROFILE="$1" docker compose -f /path/to/The_Ultimate_CLI/compose.yml run --rm "${@:2}" app
 }
 ```
 
@@ -207,6 +212,33 @@ CLI ABCProject
 ```shell
 CLI
 ```
+
+- Rebuild the image after changing the `Dockerfile` or `entrypoint.sh` (the running container otherwise keeps using the old, cached image):
+
+```shell
+CLI build
+```
+
+#### Why the function does more than just set `AWS_PROFILE`
+
+Services that produce a result the user actually needs (downloaded logs, a generated WireGuard client config, etc.) used to write those files inside `cli_services/`, which is bind-mounted into the repo — so results piled up inside the repo itself and disappeared once the container stopped.
+
+The fix lives in `compose.yml` itself, not the alias — it mounts a folder next to wherever you invoke `CLI` from into the container:
+
+```yaml
+volumes:
+  - "${PWD}/THE_ULTIMATE_CLI:/${AWS_PROFILE:-default}_mount"
+```
+
+`${PWD}` is resolved from your shell's environment at the moment `docker compose` runs, so it tracks your current working directory even though the compose file itself lives elsewhere; `${AWS_PROFILE:-default}` names the mount after the profile you passed in. Docker creates the host-side `THE_ULTIMATE_CLI` folder automatically if it doesn't exist yet. Keeping this in `compose.yml` (rather than as an ad-hoc `-v` flag built inside the shell function) means it's version-controlled and applies for anyone using this repo, not just your personal shell config.
+
+The one thing still worth doing from the alias is passing through extra `docker compose run` flags via `${@:2}` — everything after the profile name goes straight through, so you can layer on additional ad-hoc mounts when needed, e.g.:
+
+```shell
+CLI bs -v "$PWD/public/table_definition:/table_definition"
+```
+
+Inside the container, `entrypoint.sh` exports `MOUNT_DIR` (`/${AWS_PROFILE}_mount`) and `OUTPUT_DIR` (`$MOUNT_DIR/outputs`, pre-created) so any script can just write to `$OUTPUT_DIR` with no extra setup — see the [Mounted Output Directory feature](./README.md#6-mounted-output-directory-for-generated-files-new-feature) in the README for the full picture.
 
 ## Changing the Docker file.
 AWS CLI image as a standalone image it works well till now. BUt i am not able  to install the latest node version in it as the dependency issue arises between amazon linux and the node latest versions groff package. So decided to change the docker file to use the node image as the base image.

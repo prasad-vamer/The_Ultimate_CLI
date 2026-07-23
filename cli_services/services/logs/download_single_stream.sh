@@ -36,7 +36,7 @@ echo "$LOG_GROUP_NAME" >"$LAST_LOG_GROUP_FILE"
 echo "$LOG_STREAM_NAME" >"$LAST_LOG_STREAM_FILE"
 
 # Output filename
-OUTPUT_FILE="logs_${LOG_STREAM_NAME//\//_}.txt"
+OUTPUT_FILE="${OUTPUT_DIR}/logs_${LOG_STREAM_NAME//\//_}.txt"
 
 echo "Downloading logs from:"
 echo "  Log Group : $LOG_GROUP_NAME"

@@ -114,7 +114,17 @@ Welcome to **The Ultimate CLI** repository! This project is designed to streamli
 
 This feature is ideal for simplifying EC2 instance management and access for developers, DevOps engineers, and cloud administrators.
 
+### 6. Mounted Output Directory for Generated Files (New Feature)
 
+- **Why it exists**: Services like the log downloader (`services/logs/download_single_stream.sh`) and the WireGuard provisioner (`services/vpn/wireguard_provision.sh`) produce files the user actually needs (downloaded logs, VPN client configs). Previously these were written inside the container's `cli_services/` folder, which is bind-mounted straight into this repo — so every result accumulated inside the repo itself and was lost the moment the container stopped, unless committed by accident.
+- **How it works now**:
+  - `compose.yml` mounts a dedicated host folder — `${PWD}/THE_ULTIMATE_CLI` (Docker creates it automatically if missing, relative to wherever you invoke `CLI` from) — into the container at `/${AWS_PROFILE:-default}_mount`.
+  - `entrypoint.sh` exports two environment variables at container start, available to every script with zero per-script setup:
+    - `MOUNT_DIR` — the base mount (`/${AWS_PROFILE}_mount`), for any future subfolder needs (e.g. user scripts).
+    - `OUTPUT_DIR` — `$MOUNT_DIR/outputs`, pre-created, where result-producing scripts should write.
+  - Any script that generates a user-facing result just writes to `$OUTPUT_DIR` — no need to compute paths, know the AWS profile, or create directories itself.
+- **Result**: Generated files land at `<the directory you ran CLI from>/THE_ULTIMATE_CLI/outputs/...` on your host machine, survive after the container exits, and never touch the repo.
+- **Rebuilding after changes**: Since `entrypoint.sh` and the `Dockerfile` are baked into the image at build time, run `CLI build` (see the [alias section](./WALKME.md#adding-alias-to-the-aws-cli-commands)) after editing either, so the container picks up the change.
 
 ## Upcoming Features
 
